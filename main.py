@@ -119,14 +119,14 @@ async def main():
     return HTMLResponse(content=html_content)
 
 # Функция для генерации ответа от модели
-def generate_response(user_id, user_message, chat_history, model_name):
+def generate_response(user_id, user_message, chat_history, model_name, prompt):
     # Логика для генерации ответа с использованием выбранной модели
     try:
         supported_models = ["Qwen/Qwen2.5-0.5B-Instruct",'Qwen/Qwen2.5-7B-Instruct','Qwen/Qwen2.5-3B-Instruct','Qwen/Qwen2.5-14B-Instruct','Qwen/Qwen2.5-32B-Instruct',"google/gemma-2-2b-it",'google/gemma-2-9b-it','google/gemma-2-27b-it','ai-forever/ruGPT-3.5-13B','Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24','IlyaGusev/saiga_llama3_8b']
 
         # Проверка на наличие модели в списке поддерживаемых моделей
         if model_name in supported_models:
-            return app.state.model_handler.chat(app.state.documents.get(user_id, []), user_message, model_name, chat_history)
+            return app.state.model_handler.chat(app.state.documents.get(user_id, []), user_message, model_name, chat_history, prompt)
         else:
             raise ValueError(f"Модель {model_name} не поддерживается")
     except Exception as e:
