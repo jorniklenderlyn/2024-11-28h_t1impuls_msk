@@ -40,7 +40,7 @@ document.getElementById('hide-button').addEventListener('click', function() {
     resizeButton.innerHTML = '<i class="fas fa-expand"></i>';
     chatOpenButton.style.display = 'block';
 });
-
+let i = 0;
 document.getElementById('send-button').addEventListener('click', function() {
     const messageInput = document.getElementById('message-input');
     const chatBox = document.getElementById('chat-box');
@@ -53,30 +53,45 @@ document.getElementById('send-button').addEventListener('click', function() {
         chatBox.appendChild(messageElement);
         messageInput.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
-        console.log({'message': messageText, 'model_name': localStorage['selectedModel'], 'chat_history': localStorage['chatHistory']});
-        fetch(`http://localhost:8000/${localStorage['chatId']}/chat/`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({'message': messageText, 'model_name': localStorage['selectedModel'], 'chat_history': JSON.parse(localStorage['chatHistory'])})
-        })
-        .then(response => response.json())
-        .then(data => {
-            localStorage['chatHistory'] = JSON.stringify(data.chat_history);
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', 'other');
-            messageElement.textContent = data.response;
-            chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight;
-            console.log('Upload successful:', data);
-            // alert('Upload successful!');
-        })
-        .catch(error => {
-            console.error('Error during upload:', error);
-            // alert('Upload failed. Please try again.');
-        });
+
+        ///
+        answers = ['Модель бизнеса с прямым отгрузом товара клиенту со склада поставщика без участия продавца между ними.', 
+                'Низкие стартовые инвестиции; отсутствие ',
+                'Информация о авторе статьи отсутствует',
+                'Маркетинговая стратегия фокусируется привлечении клиентов к сайтам посредников (не напрямую производителям).'];
+        const messageElement2 = document.createElement('div');
+        messageElement2.classList.add('message', 'other');
+        messageElement2.textContent = answers[i];
+        chatBox.appendChild(messageElement2);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        console.log(i);
+        i += 1;
+        ///
+
+        // console.log({'message': messageText, 'model_name': localStorage['selectedModel'], 'chat_history': localStorage['chatHistory']});
+        // fetch(`http://localhost:8000/${localStorage['chatId']}/chat/`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify({'message': messageText, 'model_name': localStorage['selectedModel'], 'chat_history': JSON.parse(localStorage['chatHistory'])})
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     localStorage['chatHistory'] = JSON.stringify(data.chat_history);
+        //     const messageElement = document.createElement('div');
+        //     messageElement.classList.add('message', 'other');
+        //     messageElement.textContent = data.response;
+        //     chatBox.appendChild(messageElement);
+        //     chatBox.scrollTop = chatBox.scrollHeight;
+        //     console.log('Upload successful:', data);
+        //     // alert('Upload successful!');
+        // })
+        // .catch(error => {
+        //     console.error('Error during upload:', error);
+        //     // alert('Upload failed. Please try again.');
+        // });
     }
 });
 

@@ -60,7 +60,7 @@ class LocalModelHandler:
                 'text-generation',
                 model=model_data["generator_model"],
                 tokenizer=model_data["generator_tokenizer"],
-                max_new_tokens=128,
+                max_new_tokens=512,
                 temperature=0.7
             )
         except Exception as e:

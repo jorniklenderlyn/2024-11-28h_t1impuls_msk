@@ -38,7 +38,7 @@ def split_into_chunks(text, chunk_size=500):
 
 
 # Поиск документов с использованием FAISS
-def search_documents(query, embedder, index, document_chunks, top_k=3):
+def search_documents(query, embedder, index, document_chunks, top_k=5):
     query_embedding = embedder.encode([query])
     distances, indices = index.search(np.array(query_embedding), top_k)
     return [document_chunks[i] for i in indices[0]]
