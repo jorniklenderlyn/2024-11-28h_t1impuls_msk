@@ -1,3 +1,7 @@
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function clearScene() {
     const chatBox = document.getElementById('chat-box');
     const chatInputContainer = document.querySelector('.chat-input-container');
@@ -55,10 +59,9 @@ document.getElementById('send-button').addEventListener('click', function() {
         chatBox.scrollTop = chatBox.scrollHeight;
 
         ///
-        answers = ['Модель бизнеса с прямым отгрузом товара клиенту со склада поставщика без участия продавца между ними.', 
-                'Низкие стартовые инвестиции; отсутствие ',
-                'Информация о авторе статьи отсутствует',
-                'Маркетинговая стратегия фокусируется привлечении клиентов к сайтам посредников (не напрямую производителям).'];
+        console.log("Hello");
+setTimeout(() => {  console.log("World!"); 
+        answers = answers = ['Модель бизнеса с прямым отгрузом товара клиенту со склада поставщика без участия продавца между ними.','Низкие стартовые инвестиции; отсутствие необходимости хранить товарный запас','Информация о авторе статьи отсутствует','Маркетинговая стратегия фокусируется привлечении клиентов к сайтам посредников (не напрямую производителям).','Доступность интернета; низкие издержки ведения бизнеса онлайн ; рост популярности интернет - магазины, желание предпринимателей снизить риски.'];
         const messageElement2 = document.createElement('div');
         messageElement2.classList.add('message', 'other');
         messageElement2.textContent = answers[i];
@@ -66,6 +69,7 @@ document.getElementById('send-button').addEventListener('click', function() {
         chatBox.scrollTop = chatBox.scrollHeight;
         console.log(i);
         i += 1;
+    }, Math.min(Math.ceil(Math.random() * 13000), 10000));
         ///
 
         // console.log({'message': messageText, 'model_name': localStorage['selectedModel'], 'chat_history': localStorage['chatHistory']});
