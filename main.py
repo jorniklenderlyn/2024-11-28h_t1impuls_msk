@@ -4,6 +4,8 @@ from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 import os
 import logging
 import dotenv 
@@ -43,6 +45,8 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.post("/{user_id}/upload/")
@@ -103,6 +107,13 @@ async def chat(user_id: int, request: ChatRequest):
     except Exception as e:
         # Обрабатываем ошибки и отправляем их как HTTPException
         raise HTTPException(status_code=500, detail=f"Ошибка: {str(e)}")
+
+
+@app.get('/', response_class=HTMLResponse)
+async def main():
+    with open("static/index.html", encoding='utf-8') as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content)
 
 # Функция для генерации ответа от модели
 def generate_response(user_id, user_message, chat_history, model_name):

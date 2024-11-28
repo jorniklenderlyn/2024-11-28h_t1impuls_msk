@@ -6,11 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlInput = document.getElementById('urlInput');
     const addUrlButton = document.getElementById('addUrlButton');
     const uploadButton = document.getElementById('uploadButton');
-    const loadingBar = document.getElementById('loadingBar');
+    const modalOverlay = document.getElementById('modalOverlay');
     const progressBar = document.getElementById('progressBar');
+    const cancelButton = document.getElementById('cancelButton');
 
     let filesToUpload = [];
     let urlsToUpload = [];
+    let uploadAbortController = new AbortController();
 
     // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -111,13 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('urls', url);
         });
 
-        // Show loading bar
-        loadingBar.style.display = 'block';
+        // Show modal overlay
+        modalOverlay.style.display = 'flex';
         progressBar.style.width = '0%';
 
-        fetch('/upload', {
+        fetch('http://localhost:8000/upload', {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: uploadAbortController.signal
         })
         .then(response => {
             if (!response.ok) {
@@ -131,14 +134,24 @@ document.addEventListener('DOMContentLoaded', () => {
             fileList.innerHTML = ''; // Clear the file list
             filesToUpload = []; // Clear the files array
             urlsToUpload = []; // Clear the URLs array
-            // Hide loading bar
-            loadingBar.style.display = 'none';
+            // Hide modal overlay
+            modalOverlay.style.display = 'none';
         })
         .catch(error => {
-            console.error('Error during upload:', error);
-            alert('Upload failed. Please try again.');
-            // Hide loading bar
-            loadingBar.style.display = 'none';
+            if (error.name === 'AbortError') {
+                console.log('Upload aborted');
+            } else {
+                console.error('Error during upload:', error);
+                alert('Upload failed. Please try again.');
+            }
+            // Hide modal overlay
+            modalOverlay.style.display = 'none';
         });
+    });
+
+    // Handle cancel button click
+    cancelButton.addEventListener('click', () => {
+        uploadAbortController.abort();
+        modalOverlay.style.display = 'none';
     });
 });
