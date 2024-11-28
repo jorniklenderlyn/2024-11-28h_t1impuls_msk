@@ -53,6 +53,30 @@ document.getElementById('send-button').addEventListener('click', function() {
         chatBox.appendChild(messageElement);
         messageInput.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
+        console.log({'message': messageText, 'model_name': localStorage['selectedModel'], 'chat_history': localStorage['chatHistory']});
+        fetch(`http://localhost:8000/${localStorage['chatId']}/chat/`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({'message': messageText, 'model_name': localStorage['selectedModel'], 'chat_history': JSON.parse(localStorage['chatHistory'])})
+        })
+        .then(response => response.json())
+        .then(data => {
+            localStorage['chatHistory'] = JSON.stringify(data.chat_history);
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'other');
+            messageElement.textContent = data.response;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            console.log('Upload successful:', data);
+            // alert('Upload successful!');
+        })
+        .catch(error => {
+            console.error('Error during upload:', error);
+            // alert('Upload failed. Please try again.');
+        });
     }
 });
 
@@ -106,7 +130,7 @@ document.getElementById('settings-button').addEventListener('click', function() 
 
 Array.from(document.getElementsByClassName('back-button')).forEach(btn => {
     btn.addEventListener('click', function() {
-        alert("");
+        // alert("");
         const chatBox = document.getElementById('chat-box');
         const chatInputContainer = document.querySelector('.chat-input-container');
         

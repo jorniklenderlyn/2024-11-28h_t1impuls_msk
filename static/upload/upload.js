@@ -111,8 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 console.log('Upload successful:', data);
                 // alert('Upload successful!');
-                fileList.innerHTML = ''; // Clear the file list
-                filesToUpload = []; // Clear the files array
             })
             .catch(error => {
                 console.error('Error during upload:', error);
@@ -124,5 +122,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             formData = new FormData();
         });
+        filesToUpload = []; // Clear the files array
+
+        urlsToUpload.forEach(url => {
+            fetch('http://localhost:8000/url', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'url': url})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Upload successful:', data);
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+                // alert('Upload failed. Please try again.');
+            });
+    
+            urlsToUpload.forEach(url => {
+                formData.append('urls', url);
+            });
+        });
+        fileList.innerHTML = ''; // Clear the file list
+        urlsToUpload = []; // Clear the files array
     });
 });
