@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Chat Button</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles6.css">
+</head>
+<body>
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <button id="resize-button"><i class="fas fa-expand"></i></button>
+            <button id="hide-button"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-box" id="chat-box">
+            <!-- Chat messages would go here -->
+            <div class="message self">Hello, how can I help you?</div>
+            <div class="message other">Hi, I need some assistance.</div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+    </div>
+    <button id="chat-open-button"><i class="fas fa-comments"></i></button>
+    <script src="script6.js"></script>
+</body>
+</html>
