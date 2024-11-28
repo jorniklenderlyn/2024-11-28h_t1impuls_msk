@@ -8,6 +8,18 @@ body {
     background-color: #f0f0f0;
 }
 
+.back-button {
+    padding: 8px;
+    background-color: none;
+    color: grey;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.back-button:hover {
+    color: blue;
+}
+
 .chat-container {
     position: relative;
     width: 300px;
@@ -150,6 +162,7 @@ body {
     display: none;
     flex-direction: column;
     padding: 10px;
+    height: 100%;
 }
 
 .file-form input[type="file"] {
@@ -174,6 +187,7 @@ body {
     display: none;
     flex-direction: column;
     padding: 10px;
+    height: 100%;
 }
 
 .settings-form select,

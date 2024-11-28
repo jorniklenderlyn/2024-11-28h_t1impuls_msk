@@ -1,3 +1,15 @@
+function clearScene() {
+    const chatBox = document.getElementById('chat-box');
+    const chatInputContainer = document.querySelector('.chat-input-container');
+    const fileForm = document.querySelector('.file-form');
+    const settingsForm = document.querySelector('.settings-form');
+
+    settingsForm.style.display = 'none';
+    chatBox.style.display = 'none';
+    chatInputContainer.style.display = 'none';
+    fileForm.style.display = 'none';
+}
+
 document.getElementById('chat-open-button').addEventListener('click', function() {
     const chatContainer = document.getElementById('chat-container');
     const button = this;
@@ -55,74 +67,52 @@ document.getElementById('add-data-button').addEventListener('click', function() 
     const chatInputContainer = document.querySelector('.chat-input-container');
     const fileForm = document.querySelector('.file-form');
 
+    clearScene();
     chatBox.style.display = 'none';
     chatInputContainer.style.display = 'none';
     fileForm.style.display = 'flex';
 });
 
-document.querySelector('.file-form button').addEventListener('click', function() {
-    const chatBox = document.getElementById('chat-box');
-    const chatInputContainer = document.querySelector('.chat-input-container');
-    const fileForm = document.querySelector('.file-form');
+// document.querySelector('.file-form button').addEventListener('click', function() {
+//     const chatBox = document.getElementById('chat-box');
+//     const chatInputContainer = document.querySelector('.chat-input-container');
+//     const fileForm = document.querySelector('.file-form');
 
-    chatBox.style.display = 'block';
-    chatInputContainer.style.display = 'flex';
-    fileForm.style.display = 'none';
-});
+//     chatBox.style.display = 'block';
+//     chatInputContainer.style.display = 'flex';
+//     fileForm.style.display = 'none';
+// });
 
 document.getElementById('settings-button').addEventListener('click', function() {
     const chatBox = document.getElementById('chat-box');
     const chatInputContainer = document.querySelector('.chat-input-container');
     const settingsForm = document.querySelector('.settings-form');
 
+    clearScene();
     chatBox.style.display = 'none';
     chatInputContainer.style.display = 'none';
     settingsForm.style.display = 'flex';
 });
 
-document.querySelector('.settings-form button').addEventListener('click', function() {
-    const chatBox = document.getElementById('chat-box');
-    const chatInputContainer = document.querySelector('.chat-input-container');
-    const settingsForm = document.querySelector('.settings-form');
+// document.querySelector('.settings-form button').addEventListener('click', function() {
+//     const chatBox = document.getElementById('chat-box');
+//     const chatInputContainer = document.querySelector('.chat-input-container');
+//     const settingsForm = document.querySelector('.settings-form');
 
-    chatBox.style.display = 'block';
-    chatInputContainer.style.display = 'flex';
-    settingsForm.style.display = 'none';
+//     chatBox.style.display = 'block';
+//     chatInputContainer.style.display = 'flex';
+//     settingsForm.style.display = 'none';
+// });
+
+Array.from(document.getElementsByClassName('back-button')).forEach(btn => {
+    btn.addEventListener('click', function() {
+        alert("");
+        const chatBox = document.getElementById('chat-box');
+        const chatInputContainer = document.querySelector('.chat-input-container');
+        
+        clearScene();
+    
+        chatBox.style.display = 'block';
+        chatInputContainer.style.display = 'flex';
+    });
 });
-
-const dropZone = document.querySelector('.drop-zone');
-const fileInput = document.getElementById('file-input');
-const fileNamesContainer = document.createElement('div');
-fileNamesContainer.style.marginTop = '10px';
-dropZone.appendChild(fileNamesContainer);
-
-dropZone.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    dropZone.classList.add('dragover');
-});
-
-dropZone.addEventListener('dragleave', function() {
-    dropZone.classList.remove('dragover');
-});
-
-dropZone.addEventListener('drop', function(e) {
-    e.preventDefault();
-    dropZone.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    handleFiles(files);
-});
-
-fileInput.addEventListener('change', function() {
-    const files = fileInput.files;
-    handleFiles(files);
-});
-
-function handleFiles(files) {
-    fileNamesContainer.innerHTML = '';
-    for (let i = 0; i < files.length; i++) {
-        const fileName = files[i].name;
-        const fileNameElement = document.createElement('div');
-        fileNameElement.textContent = fileName;
-        fileNamesContainer.appendChild(fileNameElement);
-    }
-}
