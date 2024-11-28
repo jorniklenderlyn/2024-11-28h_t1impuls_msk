@@ -3,8 +3,14 @@ from pydantic import BaseModel, HttpUrl
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
+import dotenv 
+
+
+dotenv.load_dotenv()
+
 logging.basicConfig(filename="log.log")
 
 from parsers import FileParser, UrlParser
@@ -28,6 +34,14 @@ async def lifespan(cur_app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan) 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 @app.post("/upload/")

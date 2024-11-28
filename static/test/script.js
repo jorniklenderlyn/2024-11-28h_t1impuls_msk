@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlInput = document.getElementById('urlInput');
     const addUrlButton = document.getElementById('addUrlButton');
     const uploadButton = document.getElementById('uploadButton');
+    const loadingBar = document.getElementById('loadingBar');
+    const progressBar = document.getElementById('progressBar');
 
     let filesToUpload = [];
     let urlsToUpload = [];
@@ -99,30 +101,44 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        var formData = new FormData();
+        const formData = new FormData();
 
         filesToUpload.forEach(file => {
-            formData.append('file', file);
-            fetch('http://localhost:8000/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Upload successful:', data);
-                // alert('Upload successful!');
-                fileList.innerHTML = ''; // Clear the file list
-                filesToUpload = []; // Clear the files array
-            })
-            .catch(error => {
-                console.error('Error during upload:', error);
-                // alert('Upload failed. Please try again.');
-            });
-    
-            urlsToUpload.forEach(url => {
-                formData.append('urls', url);
-            });
-            formData = new FormData();
+            formData.append('files', file);
+        });
+
+        urlsToUpload.forEach(url => {
+            formData.append('urls', url);
+        });
+
+        // Show loading bar
+        loadingBar.style.display = 'block';
+        progressBar.style.width = '0%';
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Upload successful:', data);
+            alert('Upload successful!');
+            fileList.innerHTML = ''; // Clear the file list
+            filesToUpload = []; // Clear the files array
+            urlsToUpload = []; // Clear the URLs array
+            // Hide loading bar
+            loadingBar.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error during upload:', error);
+            alert('Upload failed. Please try again.');
+            // Hide loading bar
+            loadingBar.style.display = 'none';
         });
     });
 });

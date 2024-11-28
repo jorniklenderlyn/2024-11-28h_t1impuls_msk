@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop File Upload</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="upload-container">
+        <div class="drop-area" id="dropArea">
+            <p>Drag & Drop files here or click to select files</p>
+            <div class="drop-zone" id="dropZone">
+                <p>Drop files here</p>
+            </div>
+            <input type="file" id="fileInput" multiple>
+        </div>
+        <div class="url-input-container">
+            <div class="input-group">
+                <input type="text" id="urlInput" placeholder="Enter URL">
+                <button id="addUrlButton"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+        <ul id="fileList"></ul>
+        <button id="uploadButton">Upload</button>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="loading-bar">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <button id="cancelButton">Cancel</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

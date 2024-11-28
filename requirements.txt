@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+motor
+PyPDF2
+python-docx
+aiohttp
+beautifulsoup4
+playwright
+transformers
+sentence_transformers
+faiss-cpu
+python-multipart
+python-dotenv
