@@ -10,17 +10,8 @@ models = {}
 
 
 class LocalModelHandler:
-    def __init__(self, config: ModelConfig, documents: list[str]):
+    def __init__(self, config: ModelConfig):
         self.config = config
-        self.documents = documents
-
-    def load_documents(self):
-        """Чтение документов из файла"""
-        try:
-            with open(self.config.documents_path, 'r', encoding='utf-8') as file:
-                return file.readlines()
-        except Exception as e:
-            raise Exception(f"Ошибка при загрузке документов: {str(e)}")
 
     def load_model(self, model_name: str):
         """Загружаем модель только если она не была загружена."""
@@ -49,9 +40,6 @@ class LocalModelHandler:
         except Exception as e:
             raise Exception(f"Ошибка при загрузке модели '{model_name}': {str(e)}")
 
-    def add_document(self, document: str):
-        self.documents.append(document)
-
     def format_chat_history(self, chat_history):
         """Форматируем историю чата в удобный для модели формат"""
         formatted_history = ""
@@ -61,7 +49,7 @@ class LocalModelHandler:
             formatted_history += f"{role.capitalize()}: {text}\n"
         return formatted_history
 
-    def chat(self, user_input: str, model_name: str, chat_history: list, prompt: str = None):
+    def chat(self, documents: list[str], user_input: str, model_name: str, chat_history: list, prompt: str = None):
         """Обработка чата, использование истории и (опционально) пользовательского промпта"""
 
         model_data = self.load_model(model_name)
@@ -84,7 +72,7 @@ class LocalModelHandler:
         formatted_history = self.format_chat_history(chat_history)
 
         # Разбиение документов на чанки и эмбеддинги
-        document_chunks = split_into_chunks(self.documents, self.config.chunk_size)
+        document_chunks = split_into_chunks(documents, self.config.chunk_size)
         doc_embeddings = embedder.encode(document_chunks)
 
         # Индексация с помощью FAISS

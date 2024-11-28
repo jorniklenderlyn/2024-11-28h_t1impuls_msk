@@ -24,12 +24,13 @@ async def lifespan(cur_app: FastAPI):
     text_db = db_client.text
     text_collection = text_db.text
     cur_app.state.text_collection = text_collection
+    cur_app.state.documents = {}
 
-    texts = []
     async for doc in text_collection.find():
-        texts.append(doc["text"])
-    cur_app.state.model_handler = LocalModelHandler(config=ModelConfig(), documents=texts)
-    print(len(texts))
+        if doc["id"] not in cur_app.state.documents:
+            cur_app.state.documents[doc["id"]] = []
+        cur_app.state.documents[doc["id"]].append(doc["text"])
+    cur_app.state.model_handler = LocalModelHandler(config=ModelConfig())
     yield
 
 
@@ -44,12 +45,14 @@ app.add_middleware(
 )
 
 
-@app.post("/upload/")
-async def upload_file(file: UploadFile = File(...)):
+@app.post("/{user_id}/upload/")
+async def upload_file(user_id: int, file: UploadFile = File(...)):
     try:
         text = FileParser.parse(file.filename, await file.read())
-        await app.state.text_collection.insert_one({"text": text})
-        app.state.model_handler.add_document(text)
+        await app.state.text_collection.insert_one({"text": text, "id": user_id})
+        if user_id not in app.state.documents:
+            app.state.documents[user_id] = []
+        app.state.documents[user_id].append(text)
 
         return JSONResponse(content={"detail": "success"}, status_code=200)
     except Exception as e:
@@ -61,13 +64,15 @@ class URLRequest(BaseModel):
     url: HttpUrl
 
 
-@app.post("/url/")
-async def upload_url(request: URLRequest):
+@app.post("/{user_id}/url/")
+async def upload_url(user_id: int, request: URLRequest):
     try:
         parser = UrlParser()
         text = await parser.parse(str(request.url))
-        await app.state.text_collection.insert_one({"text": text})
-        app.state.model_handler.add_document(text)
+        await app.state.text_collection.insert_one({"text": text, "id": user_id})
+        if user_id not in app.state.documents:
+            app.state.documents[user_id] = []
+        app.state.documents[user_id].append(text)
 
         return JSONResponse(content={"detail": "success"}, status_code=200)
     except Exception as e:
@@ -81,8 +86,8 @@ class ChatRequest(BaseModel):
     chat_history: list[dict[str, str]]  # История чата
 
 # Обработчик POST запроса для чата
-@app.post("/chat/")
-async def chat(request: ChatRequest):
+@app.post("/{user_id}/chat/")
+async def chat(user_id: int, request: ChatRequest):
     # Получаем сообщение пользователя и историю чата
     user_message = request.message
     chat_history = request.chat_history
@@ -90,7 +95,7 @@ async def chat(request: ChatRequest):
 
     try:
         # Генерация ответа с использованием выбранной модели
-        response = generate_response(user_message, chat_history, model_name)
+        response = generate_response(user_id, user_message, chat_history, model_name)
         print(response)
         # Возвращаем ответ и обновленную историю чата
         return {"response": response, "chat_history": chat_history}
@@ -100,14 +105,14 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=f"Ошибка: {str(e)}")
 
 # Функция для генерации ответа от модели
-def generate_response(user_message, chat_history, model_name):
+def generate_response(user_id, user_message, chat_history, model_name):
     # Логика для генерации ответа с использованием выбранной модели
     try:
         supported_models = ["Qwen/Qwen2.5-0.5B-Instruct",'Qwen/Qwen2.5-7B-Instruct','Qwen/Qwen2.5-3B-Instruct','Qwen/Qwen2.5-14B-Instruct','Qwen/Qwen2.5-32B-Instruct',"google/gemma-2-2b-it",'google/gemma-2-9b-it','google/gemma-2-27b-it','ai-forever/ruGPT-3.5-13B','Vikhrmodels/Vikhr-Nemo-12B-Instruct-R-21-09-24','IlyaGusev/saiga_llama3_8b']
 
         # Проверка на наличие модели в списке поддерживаемых моделей
         if model_name in supported_models:
-            return app.state.model_handler.chat(user_message, model_name, chat_history)
+            return app.state.model_handler.chat(app.state.documents.get(user_id, []), user_message, model_name, chat_history)
         else:
             raise ValueError(f"Модель {model_name} не поддерживается")
     except Exception as e:
