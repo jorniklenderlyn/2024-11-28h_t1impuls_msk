@@ -6,7 +6,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
-import dotenv 
+import dotenv
+from typing import Optional
 
 
 dotenv.load_dotenv()
@@ -84,6 +85,7 @@ class ChatRequest(BaseModel):
     message: str  # Сообщение пользователя
     model_name: str  # Имя модели
     chat_history: list[dict[str, str]]  # История чата
+    prompt: Optional[str] = None
 
 # Обработчик POST запроса для чата
 @app.post("/{user_id}/chat/")
@@ -92,10 +94,11 @@ async def chat(user_id: int, request: ChatRequest):
     user_message = request.message
     chat_history = request.chat_history
     model_name = request.model_name
+    prompt = request.prompt
 
     try:
         # Генерация ответа с использованием выбранной модели
-        response = generate_response(user_id, user_message, chat_history, model_name)
+        response = generate_response(user_id, user_message, chat_history, model_name, prompt)
         print(response)
         # Возвращаем ответ и обновленную историю чата
         return {"response": response, "chat_history": chat_history}
